@@ -9,24 +9,29 @@ const NAV_GROUPS = [
   {
     label: '⚽ Football',
     links: [
-      { href: '/leagues',   label: '🏆 League Tables', desc: 'Standings for every league' },
-      { href: '/players',   label: '⭐ Top Players',    desc: 'Stats, ratings & values' },
+      { href: '/leagues',      label: '🏆 League Tables',  desc: 'Standings for every league' },
+      { href: '/players',      label: '⭐ Top Players',     desc: 'Stats, ratings & values' },
+      { href: '/golden-boot',  label: '👟 Golden Boot',    desc: 'Top scorers across all leagues' },
+      { href: '/wonderkids',   label: '🌟 Wonderkids',     desc: 'Best under-22 players' },
     ],
   },
   {
     label: '🎮 Games',
     links: [
-      { href: '/fc26',      label: '🎮 FC26 Cards',    desc: 'Player cards & stats' },
-      { href: '/predictor', label: '🔮 Predictor',     desc: 'Predict scores, earn XP' },
-      { href: '/battle',    label: '⚔️ Battle',        desc: 'Player vs Player stats' },
-      { href: '/quiz',      label: '🧠 Quiz Zone',     desc: '10 football questions' },
+      { href: '/games',      label: '🎮 Mini Games',    desc: 'Badge quiz, silhouette & more' },
+      { href: '/fc26',       label: '🃏 FC26 Cards',    desc: 'Player cards & stats' },
+      { href: '/predictor',  label: '🔮 Predictor',     desc: 'Predict scores, earn XP' },
+      { href: '/battle',     label: '⚔️ Battle',        desc: 'Player vs Player stats' },
+      { href: '/quiz',       label: '🧠 Quiz Zone',     desc: '10 football questions' },
+      { href: '/dreamteam',  label: '⚽ Dream Team',    desc: 'Pick your ultimate 11' },
+      { href: '/goat',       label: '🐐 GOAT Debate',   desc: 'Messi vs Ronaldo — you decide' },
     ],
   },
   {
     label: '💬 Community',
     links: [
-      { href: '/interviews', label: '🎙 Interviews',   desc: 'Kids interview the pros' },
-      { href: '/discussions',label: '💬 Discussions',  desc: 'Chat with other kids' },
+      { href: '/interviews',  label: '🎙 Interviews',   desc: 'Kids interview the pros' },
+      { href: '/discussions', label: '💬 Discussions',  desc: 'Chat with other kids' },
     ],
   },
 ]
