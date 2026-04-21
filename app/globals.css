@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #020617;
+  --foreground: #f8fafc;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+@layer components {
+  .card {
+    @apply bg-dark-800 border border-white/10 rounded-2xl p-5;
+  }
+  .card-green {
+    @apply bg-pitch-900 border border-pitch-700/50 rounded-2xl p-5;
+  }
+  .btn-primary {
+    @apply bg-pitch-500 hover:bg-pitch-600 text-white font-bold px-5 py-2.5 rounded-xl transition-all active:scale-95;
+  }
+  .btn-volt {
+    @apply bg-volt-400 hover:bg-volt-500 text-dark-900 font-bold px-5 py-2.5 rounded-xl transition-all active:scale-95;
+  }
+  .btn-ghost {
+    @apply border border-white/20 hover:border-white/40 text-white font-semibold px-5 py-2.5 rounded-xl transition-all;
+  }
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full;
+  }
+  .badge-green {
+    @apply badge bg-pitch-500/20 text-pitch-400 border border-pitch-500/30;
+  }
+  .badge-volt {
+    @apply badge bg-volt-400/20 text-volt-400 border border-volt-400/30;
+  }
+  .badge-fire {
+    @apply badge bg-fire-500/20 text-fire-400 border border-fire-500/30;
+  }
+  .badge-sky {
+    @apply badge bg-sky-500/20 text-sky-400 border border-sky-500/30;
+  }
+  .section-title {
+    @apply text-2xl font-extrabold text-white tracking-tight;
+  }
+  .input {
+    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-white/30 focus:outline-none focus:border-pitch-500 focus:ring-1 focus:ring-pitch-500 transition-colors w-full;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
