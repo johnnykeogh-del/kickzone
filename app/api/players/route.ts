@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { TOP_PLAYERS } from '@/lib/football'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const search = (searchParams.get('q') || '').toLowerCase()

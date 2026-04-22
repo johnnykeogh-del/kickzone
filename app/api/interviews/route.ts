@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 // Seed featured pro player interviews (kid questions + real answers)
 const FEATURED_INTERVIEWS = [
   {
