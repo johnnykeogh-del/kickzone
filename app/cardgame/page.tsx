@@ -98,6 +98,13 @@ const DIFFICULTY_CONFIG = {
   hard:   { label: '🔴 Hard',   desc: 'CPU always picks best',    color: 'border-red-500 bg-red-500/10' },
 }
 
+interface PendingTurn {
+  isMyTurn: boolean
+  mDeck: Card[]
+  cDeck: Card[]
+  diff: Difficulty
+}
+
 function VsComputer({ onBack }: { onBack: () => void }) {
   const [difficulty, setDifficulty] = useState<Difficulty | null>(null)
   const [myDeck, setMyDeck] = useState<Card[]>([])
@@ -108,6 +115,7 @@ function VsComputer({ onBack }: { onBack: () => void }) {
   const [myTurn, setMyTurn] = useState(true)
   const [finished, setFinished] = useState(false)
   const [iWon, setIWon] = useState(false)
+  const [pendingTurn, setPendingTurn] = useState<PendingTurn | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const startGame = (diff: Difficulty) => {
@@ -117,6 +125,9 @@ function VsComputer({ onBack }: { onBack: () => void }) {
     setMyDeck(shuffled.slice(0, mid))
     setCpuDeck(shuffled.slice(mid))
     setMyTurn(true)
+    setShowResult(false)
+    setPendingTurn(null)
+    setFinished(false)
   }
 
   const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty) => {
@@ -154,18 +165,25 @@ function VsComputer({ onBack }: { onBack: () => void }) {
       return
     }
 
-    timerRef.current = setTimeout(() => {
-      setShowResult(false)
-      setMyTurn(winner === 'me' || (winner === 'draw' && isMyPick))
-      if (winner === 'cpu' || (winner === 'draw' && !isMyPick)) {
-        setCpuThinking(true)
-        timerRef.current = setTimeout(() => {
-          setCpuThinking(false)
-          resolveRound(cpuPickStat(newCpuDeck[0], diff), newMyDeck, newCpuDeck, false, diff)
-        }, 1200)
-      }
-    }, 2200)
+    // Store who goes next — player clicks "Next Round" to advance
+    const nextIsMyTurn = winner === 'me' || (winner === 'draw' && isMyPick)
+    setPendingTurn({ isMyTurn: nextIsMyTurn, mDeck: newMyDeck, cDeck: newCpuDeck, diff })
   }, [])
+
+  const nextRound = useCallback(() => {
+    if (!pendingTurn) { setShowResult(false); return }
+    setShowResult(false)
+    setMyTurn(pendingTurn.isMyTurn)
+    const pt = pendingTurn
+    setPendingTurn(null)
+    if (!pt.isMyTurn) {
+      setCpuThinking(true)
+      timerRef.current = setTimeout(() => {
+        setCpuThinking(false)
+        resolveRound(cpuPickStat(pt.cDeck[0], pt.diff), pt.mDeck, pt.cDeck, false, pt.diff)
+      }, 1000)
+    }
+  }, [pendingTurn, resolveRound])
 
   useEffect(() => {
     return () => { if (timerRef.current) clearTimeout(timerRef.current) }
@@ -216,29 +234,57 @@ function VsComputer({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      {/* Round result */}
+      {/* Round result — shown until player clicks Next */}
       {showResult && roundResult && (
-        <div className="flex justify-center gap-6 items-start">
-          <div className="text-center space-y-1">
-            <p className="text-white/50 text-xs font-bold">YOU</p>
-            <MiniCard card={roundResult.p1Card} statKey={roundResult.stat} highlight={roundResult.roundWinner === 'me'} />
-            <div className="text-2xl font-extrabold text-volt-400">{roundResult.p1Val}</div>
+        <div className="space-y-4">
+          {/* Winner banner */}
+          <div className={`rounded-2xl py-5 px-4 text-center border ${
+            roundResult.roundWinner === 'me'  ? 'bg-volt-400/10 border-volt-400/30' :
+            roundResult.roundWinner === 'cpu' ? 'bg-red-500/10 border-red-500/30' :
+                                                'bg-yellow-500/10 border-yellow-500/30'
+          }`}>
+            <div className="text-5xl mb-2">
+              {roundResult.roundWinner === 'me' ? '🎉' : roundResult.roundWinner === 'cpu' ? '🤖' : '🤝'}
+            </div>
+            <div className={`text-2xl font-extrabold ${
+              roundResult.roundWinner === 'me'  ? 'text-volt-400' :
+              roundResult.roundWinner === 'cpu' ? 'text-red-400' :
+                                                  'text-yellow-400'
+            }`}>
+              {roundResult.roundWinner === 'me'  ? 'You Win This Round!' :
+               roundResult.roundWinner === 'cpu' ? 'CPU Wins This Round!' :
+               "It's a Draw!"}
+            </div>
+            <div className="text-white/50 text-sm mt-1">
+              {STAT_LABELS[roundResult.stat]}: <span className="text-volt-400 font-bold">You {roundResult.p1Val}</span>
+              {' vs '}
+              <span className="text-red-400 font-bold">CPU {roundResult.p2Val}</span>
+            </div>
           </div>
-          <div className="flex flex-col items-center pt-10 gap-2">
-            <div className="text-white/30 font-bold">VS</div>
-            <div className="text-xs font-bold text-white/50">{STAT_LABELS[roundResult.stat]}</div>
-            {roundResult.roundWinner === 'draw'
-              ? <div className="text-yellow-400 font-extrabold">DRAW!</div>
-              : roundResult.roundWinner === 'me'
-                ? <div className="text-volt-400 font-extrabold">YOU WIN! 🎉</div>
-                : <div className="text-red-400 font-extrabold">CPU WINS 🤖</div>
-            }
+
+          {/* Cards side by side */}
+          <div className="flex justify-center gap-4 items-start">
+            <div className="text-center space-y-1">
+              <p className="text-white/50 text-xs font-bold">YOU</p>
+              <MiniCard card={roundResult.p1Card} statKey={roundResult.stat} highlight={roundResult.roundWinner === 'me'} />
+            </div>
+            <div className="text-center space-y-1">
+              <p className="text-white/50 text-xs font-bold">CPU</p>
+              <MiniCard card={roundResult.p2Card} statKey={roundResult.stat} highlight={roundResult.roundWinner === 'cpu'} />
+            </div>
           </div>
-          <div className="text-center space-y-1">
-            <p className="text-white/50 text-xs font-bold">CPU</p>
-            <MiniCard card={roundResult.p2Card} statKey={roundResult.stat} highlight={roundResult.roundWinner === 'cpu'} />
-            <div className="text-2xl font-extrabold text-red-400">{roundResult.p2Val}</div>
-          </div>
+
+          {/* Next button */}
+          {!finished && (
+            <button onClick={nextRound} className="btn-primary w-full py-4 text-lg font-extrabold">
+              Next Round →
+            </button>
+          )}
+          {finished && (
+            <button onClick={() => setShowResult(false)} className="btn-primary w-full py-4 text-lg font-extrabold">
+              See Final Result 🏆
+            </button>
+          )}
         </div>
       )}
 
