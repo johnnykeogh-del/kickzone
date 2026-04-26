@@ -115,10 +115,16 @@ function VsComputer({ onBack }: { onBack: () => void }) {
   const [myTurn, setMyTurn] = useState(true)
   const [finished, setFinished] = useState(false)
   const [iWon, setIWon] = useState(false)
-  const [pendingTurn, setPendingTurn] = useState<PendingTurn | null>(null)
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const timerRef  = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // useRef so nextRound always reads the latest value — no stale closure
+  const pendingRef = useRef<PendingTurn | null>(null)
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [])
 
   const startGame = (diff: Difficulty) => {
+    if (timerRef.current) clearTimeout(timerRef.current)
     setDifficulty(diff)
     const shuffled = shuffle([...CARDS])
     const mid = Math.floor(shuffled.length / 2)
@@ -126,17 +132,19 @@ function VsComputer({ onBack }: { onBack: () => void }) {
     setCpuDeck(shuffled.slice(mid))
     setMyTurn(true)
     setShowResult(false)
-    setPendingTurn(null)
     setFinished(false)
+    setCpuThinking(false)
+    pendingRef.current = null
   }
 
-  const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty) => {
-    const myCard = mDeck[0]
+  // Not memoised — reads only from parameters and stable setters, no stale-closure risk
+  const resolveRound = (stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty) => {
+    const myCard  = mDeck[0]
     const cpuCard = cDeck[0]
-    const myVal = myCard[stat as keyof Card] as number
-    const cpuVal = cpuCard[stat as keyof Card] as number
+    const myVal   = myCard[stat as keyof Card] as number
+    const cpuVal  = cpuCard[stat as keyof Card] as number
 
-    let newMyDeck = mDeck.slice(1)
+    let newMyDeck  = mDeck.slice(1)
     let newCpuDeck = cDeck.slice(1)
     let winner: RoundResult['roundWinner'] = 'draw'
 
@@ -147,47 +155,37 @@ function VsComputer({ onBack }: { onBack: () => void }) {
       winner = 'cpu'
       newCpuDeck = [...newCpuDeck, cpuCard, myCard]
     } else {
-      newMyDeck = [...newMyDeck, myCard]
+      newMyDeck  = [...newMyDeck,  myCard]
       newCpuDeck = [...newCpuDeck, cpuCard]
     }
 
     const gameOver = newMyDeck.length === 0 || newCpuDeck.length === 0
-    const won = newCpuDeck.length === 0
+    const won      = newCpuDeck.length === 0
+    const nextIsMyTurn = winner === 'me' || (winner === 'draw' && isMyPick)
+
+    // Write to ref BEFORE the setState calls so nextRound always sees latest data
+    pendingRef.current = { isMyTurn: nextIsMyTurn, mDeck: newMyDeck, cDeck: newCpuDeck, diff }
 
     setMyDeck(newMyDeck)
     setCpuDeck(newCpuDeck)
     setRoundResult({ p1Card: myCard, p2Card: cpuCard, stat, p1Val: myVal, p2Val: cpuVal, roundWinner: winner, myDeckSize: newMyDeck.length, oppDeckSize: newCpuDeck.length, finished: gameOver, iWon: won })
     setShowResult(true)
+    if (gameOver) { setFinished(true); setIWon(won) }
+  }
 
-    if (gameOver) {
-      setFinished(true)
-      setIWon(won)
-      return
-    }
-
-    // Store who goes next — player clicks "Next Round" to advance
-    const nextIsMyTurn = winner === 'me' || (winner === 'draw' && isMyPick)
-    setPendingTurn({ isMyTurn: nextIsMyTurn, mDeck: newMyDeck, cDeck: newCpuDeck, diff })
-  }, [])
-
-  const nextRound = useCallback(() => {
-    if (!pendingTurn) { setShowResult(false); return }
+  // Reads from ref — always current regardless of render timing
+  const nextRound = () => {
+    const pt = pendingRef.current
+    pendingRef.current = null
     setShowResult(false)
-    setMyTurn(pendingTurn.isMyTurn)
-    const pt = pendingTurn
-    setPendingTurn(null)
-    if (!pt.isMyTurn) {
-      setCpuThinking(true)
-      timerRef.current = setTimeout(() => {
-        setCpuThinking(false)
-        resolveRound(cpuPickStat(pt.cDeck[0], pt.diff), pt.mDeck, pt.cDeck, false, pt.diff)
-      }, 1000)
-    }
-  }, [pendingTurn, resolveRound])
-
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [])
+    if (!pt || pt.isMyTurn) { setMyTurn(true); return }
+    setMyTurn(false)
+    setCpuThinking(true)
+    timerRef.current = setTimeout(() => {
+      setCpuThinking(false)
+      resolveRound(cpuPickStat(pt.cDeck[0], pt.diff), pt.mDeck, pt.cDeck, false, pt.diff)
+    }, 1000)
+  }
 
   // Difficulty picker
   if (!difficulty) {
