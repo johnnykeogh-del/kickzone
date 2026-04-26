@@ -119,31 +119,7 @@ function VsComputer({ onBack }: { onBack: () => void }) {
     setMyTurn(true)
   }
 
-  useEffect(() => {
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
-  }, [])
-
-  // Difficulty picker
-  if (!difficulty) {
-    return (
-      <div className="space-y-4">
-        <h2 className="text-xl font-extrabold text-white text-center">Choose Difficulty</h2>
-        <div className="space-y-3">
-          {(Object.entries(DIFFICULTY_CONFIG) as [Difficulty, typeof DIFFICULTY_CONFIG.easy][]).map(([key, cfg]) => (
-            <button key={key} onClick={() => startGame(key)}
-              className={`w-full card border ${cfg.color} text-left p-4 hover:scale-[1.02] transition-all`}>
-              <div className="font-extrabold text-white text-lg">{cfg.label}</div>
-              <div className="text-white/50 text-sm">{cfg.desc}</div>
-            </button>
-          ))}
-        </div>
-        <button onClick={onBack} className="text-white/30 text-sm hover:text-white/60 transition-colors w-full text-center">← Back</button>
-      </div>
-    )
-  }
-
-
-  const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty = difficulty ?? 'medium') => {
+  const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty) => {
     const myCard = mDeck[0]
     const cpuCard = cDeck[0]
     const myVal = myCard[stat as keyof Card] as number
@@ -191,11 +167,32 @@ function VsComputer({ onBack }: { onBack: () => void }) {
     }, 2200)
   }, [])
 
-  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current) }, [])
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [])
+
+  // Difficulty picker
+  if (!difficulty) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-extrabold text-white text-center">Choose Difficulty</h2>
+        <div className="space-y-3">
+          {(Object.entries(DIFFICULTY_CONFIG) as [Difficulty, typeof DIFFICULTY_CONFIG.easy][]).map(([key, cfg]) => (
+            <button key={key} onClick={() => startGame(key)}
+              className={`w-full card border ${cfg.color} text-left p-4 hover:scale-[1.02] transition-all`}>
+              <div className="font-extrabold text-white text-lg">{cfg.label}</div>
+              <div className="text-white/50 text-sm">{cfg.desc}</div>
+            </button>
+          ))}
+        </div>
+        <button onClick={onBack} className="text-white/30 text-sm hover:text-white/60 transition-colors w-full text-center">← Back</button>
+      </div>
+    )
+  }
 
   const pickStat = (stat: string) => {
-    if (!myTurn || showResult || cpuThinking || myDeck.length === 0) return
-    resolveRound(stat, myDeck, cpuDeck, true)
+    if (!myTurn || showResult || cpuThinking || myDeck.length === 0 || !difficulty) return
+    resolveRound(stat, myDeck, cpuDeck, true, difficulty)
   }
 
   if (myDeck.length === 0 && cpuDeck.length === 0) {
