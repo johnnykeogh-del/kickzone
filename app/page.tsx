@@ -16,7 +16,7 @@ export default async function HomePage() {
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="relative z-10 max-w-2xl">
           <div className="flex items-center gap-2 mb-4">
-            <span className="badge-green">⚡ Live Season 2024/25</span>
+            <span className="badge-green">⚡ Live Season 2025/26</span>
             <span className="badge-volt">🏆 Global Coverage</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
