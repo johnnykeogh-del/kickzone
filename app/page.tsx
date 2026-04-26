@@ -182,7 +182,7 @@ export default async function HomePage() {
         <p className="text-white/40 text-sm mb-5">The biggest football creators kids are watching right now — skills, FIFA packs, pro interviews and challenges!</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
-            { name: 'F2Freestylers', emoji: '🎯', desc: 'Insane skill moves & freestyle tricks', subs: '14M+ subs', url: 'https://www.youtube.com/@F2Freestylers', platform: 'YouTube' },
+            { name: 'F2 / Pro Football Academy', emoji: '🎯', desc: 'Insane skill moves & freestyle tricks', subs: '14M+ subs', url: 'https://www.youtube.com/@thef2', platform: 'YouTube' },
             { name: 'SkillTwins',    emoji: '👯', desc: 'Twin brothers teaching you pro skills', subs: '14M+ subs', url: 'https://www.youtube.com/@SkillTwins', platform: 'YouTube' },
             { name: 'Theo Baker',    emoji: '🎙', desc: 'Ambushes pro players with funny interviews', subs: '4M+ subs', url: 'https://www.youtube.com/@TheoBaker', platform: 'YouTube' },
             { name: 'ChrisMD',       emoji: '🃏', desc: 'FC card packs, challenges & football fun', subs: '7M+ subs', url: 'https://www.youtube.com/@ChrisMD', platform: 'YouTube' },
