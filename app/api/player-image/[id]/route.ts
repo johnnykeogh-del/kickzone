@@ -8,7 +8,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     },
   })
 
-  if (!res.ok) return new Response('Not found', { status: 404 })
+  if (!res.ok) return new Response(`Sofascore blocked: ${res.status}`, { status: 200 })
 
   const buffer = await res.arrayBuffer()
   const contentType = res.headers.get('content-type') || 'image/jpeg'
