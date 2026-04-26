@@ -112,7 +112,7 @@ export default async function HomePage() {
             <Link key={player.id} href="/players">
               <div className="card hover:border-pitch-500/40 transition-all text-center group cursor-pointer">
                 <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-pitch-900/50 border-2 border-pitch-700/40 overflow-hidden flex items-center justify-center">
-                  <SafeImage src={player.photo} alt={player.name} className="w-full h-full object-cover object-top" fallback="⚽" />
+                  <SafeImage src={`/api/player-image/${encodeURIComponent(player.name)}`} alt={player.name} className="w-full h-full object-cover object-top" fallback="⚽" />
                 </div>
                 <p className="font-bold text-white text-sm group-hover:text-pitch-400 transition-colors leading-tight">{player.name}</p>
                 <p className="text-xs text-white/40 mt-0.5">{player.team}</p>
