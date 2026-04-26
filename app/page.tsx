@@ -190,15 +190,18 @@ export default async function HomePage() {
             { name: 'W2S',           emoji: '🔥', desc: 'FIFA & football with a massive fanbase', subs: '16M+ subs', url: 'https://www.youtube.com/@W2S', platform: 'YouTube' },
             { name: 'Calfreezy',     emoji: '❄️', desc: 'Football videos & hilarious challenges', subs: '2M+ subs', url: 'https://www.youtube.com/@Calfreezy', platform: 'YouTube' },
             { name: 'GOAL',          emoji: '🏆', desc: 'Official highlights, news & top goals', subs: '15M+ subs', url: 'https://www.youtube.com/@goal', platform: 'YouTube' },
+            { name: 'Wingrove Family', emoji: '👨‍👩‍👦', desc: 'Family football fun, challenges & vlogs', subs: '', url: 'https://www.youtube.com/channel/UCyY4jVInowKG9Nm20xXGHFw', platform: 'YouTube' },
           ].map(s => (
             <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
                className="card hover:border-red-500/40 transition-all group cursor-pointer text-center space-y-2 hover:scale-[1.02]">
               <div className="text-3xl">{s.emoji}</div>
               <h3 className="font-extrabold text-white text-sm group-hover:text-red-400 transition-colors leading-tight">{s.name}</h3>
               <p className="text-white/40 text-xs leading-relaxed">{s.desc}</p>
-              <div className="flex items-center justify-center gap-1.5 pt-1">
-                <span className="text-[10px] bg-red-600/20 text-red-400 font-bold px-2 py-0.5 rounded-full">▶ {s.subs}</span>
-              </div>
+              {s.subs && (
+                <div className="flex items-center justify-center gap-1.5 pt-1">
+                  <span className="text-[10px] bg-red-600/20 text-red-400 font-bold px-2 py-0.5 rounded-full">▶ {s.subs}</span>
+                </div>
+              )}
             </a>
           ))}
         </div>
