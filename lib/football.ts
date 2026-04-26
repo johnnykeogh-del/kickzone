@@ -280,6 +280,97 @@ export const TOP_PLAYERS = [
   { id: 12, name: 'Florian Wirtz',    team: 'Bayer Leverkusen', position: 'Midfielder', nationality: '🇩🇪', marketValue: '€150M', age: 21, goals: 14, assists: 12, rating: 8.8, photo: 'https://img.a.transfermarkt.technology/portrait/big/521361-1695893792.jpg' },
 ]
 
+// ---- Full player directory (all top-5 league squads) ----
+
+export interface FullPlayer {
+  id: number
+  name: string
+  team: string
+  teamId: number
+  teamCrest: string
+  league: string
+  leagueCode: string
+  leagueFlag: string
+  position: string
+  dateOfBirth: string
+  nationality: string
+  shirtNumber: number | null
+  age: number
+}
+
+function normalizePosition(pos: string): string {
+  if (!pos) return 'Unknown'
+  const p = pos.toLowerCase()
+  if (p === 'goalkeeper') return 'Goalkeeper'
+  if (p === 'defence') return 'Defender'
+  if (p === 'midfield') return 'Midfielder'
+  if (p === 'offence') return 'Forward'
+  return pos
+}
+
+function calcAge(dob: string): number {
+  if (!dob) return 0
+  const birth = new Date(dob)
+  const now = new Date()
+  let age = now.getFullYear() - birth.getFullYear()
+  if (now < new Date(now.getFullYear(), birth.getMonth(), birth.getDate())) age--
+  return age
+}
+
+const TOP5_CODES = ['PL', 'PD', 'BL1', 'SA', 'FL1'] as const
+
+export async function getAllLeaguePlayers(): Promise<FullPlayer[]> {
+  if (!KEY) return TOP_PLAYERS.map(p => ({
+    id: p.id, name: p.name, team: p.team, teamId: 0, teamCrest: '',
+    league: 'Premier League', leagueCode: 'PL', leagueFlag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    position: p.position, dateOfBirth: '', nationality: p.nationality, shirtNumber: null, age: p.age,
+  }))
+
+  const results = await Promise.all(
+    TOP5_CODES.map(async code => {
+      try {
+        const res = await fetch(`${BASE}/competitions/${code}/teams?season=2025`, {
+          headers: headers(),
+          next: { revalidate: 3600 },
+        })
+        if (!res.ok) return []
+        const data = await res.json()
+        const league = LEAGUES[code]
+        const players: FullPlayer[] = []
+        for (const team of (data.teams ?? [])) {
+          for (const p of (team.squad ?? [])) {
+            players.push({
+              id: p.id,
+              name: p.name,
+              team: team.shortName || team.name,
+              teamId: team.id,
+              teamCrest: team.crest || `https://crests.football-data.org/${team.id}.png`,
+              league: league.name,
+              leagueCode: code,
+              leagueFlag: league.flag,
+              position: normalizePosition(p.position),
+              dateOfBirth: p.dateOfBirth || '',
+              nationality: p.nationality || '',
+              shirtNumber: p.shirtNumber ?? null,
+              age: calcAge(p.dateOfBirth),
+            })
+          }
+        }
+        return players
+      } catch {
+        return []
+      }
+    })
+  )
+
+  const all = results.flat()
+  return all.length > 20 ? all : TOP_PLAYERS.map(p => ({
+    id: p.id, name: p.name, team: p.team, teamId: 0, teamCrest: '',
+    league: 'Premier League', leagueCode: 'PL', leagueFlag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    position: p.position, dateOfBirth: '', nationality: p.nationality, shirtNumber: null, age: p.age,
+  }))
+}
+
 export interface KnockoutTie {
   id: number
   home: { name: string; shortName: string; crest: string }
