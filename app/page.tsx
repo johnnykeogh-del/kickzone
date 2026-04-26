@@ -183,7 +183,6 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
             { name: 'F2 / Pro Football Academy', emoji: '🎯', desc: 'Insane skill moves & freestyle tricks', subs: '14M+ subs', url: 'https://www.youtube.com/@thef2', platform: 'YouTube' },
-            { name: 'SkillTwins',    emoji: '👯', desc: 'Twin brothers teaching you pro skills', subs: '14M+ subs', url: 'https://www.youtube.com/@SkillTwins', platform: 'YouTube' },
             { name: 'Theo Baker',    emoji: '🎙', desc: 'Ambushes pro players with funny interviews', subs: '4M+ subs', url: 'https://www.youtube.com/@TheoBaker', platform: 'YouTube' },
             { name: 'ChrisMD',       emoji: '🃏', desc: 'FC card packs, challenges & football fun', subs: '7M+ subs', url: 'https://www.youtube.com/@ChrisMD', platform: 'YouTube' },
             { name: 'Spencer FC',    emoji: '⚽', desc: 'Hashtag United & football challenges', subs: '1.5M+ subs', url: 'https://www.youtube.com/@SpencerFC', platform: 'YouTube' },
@@ -202,6 +201,34 @@ export default async function HomePage() {
                   <span className="text-[10px] bg-red-600/20 text-red-400 font-bold px-2 py-0.5 rounded-full">▶ {s.subs}</span>
                 </div>
               )}
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Training & Skills */}
+      <section>
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="section-title">⚽ Training & Skills Channels</h2>
+        </div>
+        <p className="text-white/40 text-sm mb-5">Want to actually get better? These channels will teach you real skills, drills and techniques used by professional players!</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'Efford Elite',       emoji: '🎓', desc: 'Pro footballer sharing real training tips & tutorials', url: 'https://www.youtube.com/@EffordElite' },
+            { name: 'Joner Football',     emoji: '🏃', desc: 'World Top 10 trainer — full individual & group sessions', url: 'https://www.youtube.com/channel/UC5wlBUZsx1r2IsO9-rvON6Q' },
+            { name: 'Progressive Soccer', emoji: '📈', desc: 'Technique, speed, fitness & mindset with Coach Dylan', url: 'https://www.youtube.com/progressivesoccer' },
+            { name: 'Coerver Coaching',   emoji: '🏅', desc: 'World-famous ball mastery & 1v1 skills programme', url: 'https://www.youtube.com/channel/UCh-plXXdM0j7JJXMoGnk2Pw' },
+            { name: '7MLC',               emoji: '🔄', desc: 'Dribbling, turns & ball mastery drills you can do at home', url: 'https://www.youtube.com/channel/UC9xRcqG8V6yNi6Hum92EoGg' },
+            { name: 'SkillTwins',         emoji: '👯', desc: 'Pro twin brothers showing you skills step by step', url: 'https://www.youtube.com/@SkillTwins' },
+          ].map(s => (
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
+               className="card hover:border-pitch-500/40 transition-all group cursor-pointer text-center space-y-2 hover:scale-[1.02]">
+              <div className="text-3xl">{s.emoji}</div>
+              <h3 className="font-extrabold text-white text-sm group-hover:text-pitch-400 transition-colors leading-tight">{s.name}</h3>
+              <p className="text-white/40 text-xs leading-relaxed">{s.desc}</p>
+              <div className="flex items-center justify-center pt-1">
+                <span className="text-[10px] bg-pitch-500/20 text-pitch-400 font-bold px-2 py-0.5 rounded-full">▶ Watch on YouTube</span>
+              </div>
             </a>
           ))}
         </div>
