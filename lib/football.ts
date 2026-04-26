@@ -420,11 +420,83 @@ export const CL_KNOCKOUT_2025: KnockoutRound[] = [
   },
 ]
 
-export const FOOTBALL_NEWS = [
-  { id: 1, title: "Premier League Title Race Heats Up With 4 Games Left! 🔥", summary: "With just four games remaining in the 2025/26 season, three clubs are still fighting for the title — it's the closest race in years!", image: "🏆", tag: "Premier League", time: "2 hours ago", hot: true },
-  { id: 2, title: "Lamine Yamal Scores Worldie to Sink Real Madrid in El Clásico!", summary: "Barcelona's 18-year-old superstar curled in a stunning long-range effort to seal a famous 2-1 victory over rivals Real Madrid at the Bernabéu.", image: "⚽", tag: "La Liga", time: "5 hours ago", hot: true },
-  { id: 3, title: "Champions League Semi-Finals: Who Will Make the Final?", summary: "The last four teams are battling it out in the Champions League semi-finals — and the ties couldn't be tighter! Who do you think will make it to Munich?", image: "🏆", tag: "Champions League", time: "8 hours ago", hot: false },
-  { id: 4, title: "Bundesliga Golden Boot: Who's Top Scorer in 2025/26?", summary: "The Bundesliga's top scorer race is going right down to the wire, with three strikers separated by just one goal heading into the final weeks.", image: "👟", tag: "Bundesliga", time: "1 day ago", hot: false },
-  { id: 5, title: "Euro 2026 Qualifying: England, France & Spain All Through!", summary: "The big nations have booked their tickets to Euro 2026 — but there were some shock results along the way in the latest qualifying round.", image: "🌍", tag: "International", time: "1 day ago", hot: false },
-  { id: 6, title: "Wonderkid Watch: The 5 Best Under-18 Players This Season", summary: "From Lamine Yamal to the next big thing from Brazil, these five teenagers are taking European football by storm in the 2025/26 season.", image: "⭐", tag: "Rising Stars", time: "2 days ago", hot: false },
+export interface NewsItem {
+  id: number
+  title: string
+  summary: string
+  image: string
+  tag: string
+  time: string
+  hot: boolean
+  link?: string
+}
+
+// Fallback if RSS fetch fails
+const FALLBACK_NEWS: NewsItem[] = [
+  { id: 1, title: "Premier League Title Race Heats Up With 4 Games Left! 🔥", summary: "With just four games remaining in the 2025/26 season, three clubs are still fighting for the title.", image: "🏆", tag: "Premier League", time: "Recently", hot: true },
+  { id: 2, title: "Lamine Yamal Scores Worldie in El Clásico!", summary: "Barcelona's teenage superstar curled in a stunning long-range effort to seal a famous victory over Real Madrid.", image: "⚽", tag: "La Liga", time: "Recently", hot: true },
+  { id: 3, title: "Champions League Semi-Finals: Who Will Make the Final?", summary: "The last four teams are battling it out — the ties couldn't be tighter!", image: "🏆", tag: "Champions League", time: "Recently", hot: false },
+  { id: 4, title: "Euro 2026: The Big Nations Book Their Tickets", summary: "England, France and Spain all through — but there were some shock results along the way.", image: "🌍", tag: "International", time: "Recently", hot: false },
+  { id: 5, title: "Bundesliga Title Race Goes to the Wire", summary: "Three clubs separated by just two points heading into the final weekend of the season.", image: "🇩🇪", tag: "Bundesliga", time: "Recently", hot: false },
+  { id: 6, title: "Wonderkid Watch: Best Under-18 Players This Season", summary: "From Lamine Yamal to the next big thing from Brazil — these teenagers are taking football by storm.", image: "⭐", tag: "Rising Stars", time: "Recently", hot: false },
 ]
+
+function rssRelativeTime(dateStr: string): string {
+  const date = new Date(dateStr)
+  if (isNaN(date.getTime())) return 'Recently'
+  const mins = Math.round((Date.now() - date.getTime()) / 60000)
+  if (mins < 60) return `${mins}m ago`
+  const hours = Math.round(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.round(hours / 24)}d ago`
+}
+
+function rssTag(title: string): string {
+  const t = title.toLowerCase()
+  if (t.includes('premier league') || t.includes('arsenal') || t.includes('chelsea') || t.includes('liverpool') || t.includes('man city') || t.includes('manchester') || t.includes('spurs') || t.includes('tottenham') || t.includes('newcastle') || t.includes('aston villa')) return 'Premier League'
+  if (t.includes('champions league') || t.includes('ucl')) return 'Champions League'
+  if (t.includes('europa league') || t.includes('conference league')) return 'Europe'
+  if (t.includes('la liga') || t.includes('barcelona') || t.includes('real madrid') || t.includes('atletico') || t.includes('sevilla')) return 'La Liga'
+  if (t.includes('bundesliga') || t.includes('bayern') || t.includes('dortmund') || t.includes('leverkusen')) return 'Bundesliga'
+  if (t.includes('serie a') || t.includes('juventus') || t.includes('inter') || t.includes('milan') || t.includes('napoli') || t.includes('roma')) return 'Serie A'
+  if (t.includes('ligue 1') || t.includes('psg') || t.includes('paris saint-germain')) return 'Ligue 1'
+  if (t.includes('world cup') || t.includes('euro 2026') || t.includes('nations league') || t.includes('england') || t.includes('france') || t.includes('brazil') || t.includes('international')) return 'International'
+  if (t.includes('transfer') || t.includes('sign') || t.includes(' deal') || t.includes('joins') || t.includes('move')) return 'Transfers'
+  return 'Football'
+}
+
+function rssEmoji(tag: string): string {
+  const m: Record<string, string> = { 'Premier League': '🏴󠁧󠁢󠁥󠁮󠁧󠁿', 'Champions League': '🏆', 'Europe': '🇪🇺', 'La Liga': '🇪🇸', 'Bundesliga': '🇩🇪', 'Serie A': '🇮🇹', 'Ligue 1': '🇫🇷', 'International': '🌍', 'Transfers': '✍️' }
+  return m[tag] || '⚽'
+}
+
+function parseRssItem(item: string, idx: number): NewsItem {
+  const get = (tag: string) => {
+    const cdata = item.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]>\\s*<\\/${tag}>`, 'i'))
+    if (cdata) return cdata[1].trim()
+    const plain = item.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i'))
+    return plain ? plain[1].replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#\d+;/g, '').trim() : ''
+  }
+  const title = get('title') || 'Football News'
+  const summary = (get('description') || title).slice(0, 240)
+  const pubDate = get('pubDate')
+  const link = get('guid') || get('link') || ''
+  const tag = rssTag(title)
+  return { id: idx + 1, title, summary, image: rssEmoji(tag), tag, time: rssRelativeTime(pubDate), hot: idx < 2, link }
+}
+
+export async function getFootballNews(): Promise<NewsItem[]> {
+  try {
+    const res = await fetch('https://feeds.bbci.co.uk/sport/football/rss.xml', {
+      next: { revalidate: 600 },
+      headers: { 'User-Agent': 'mykickzone/1.0 (kids football news site)' },
+    })
+    if (!res.ok) return FALLBACK_NEWS
+    const xml = await res.text()
+    const items = xml.match(/<item>([\s\S]*?)<\/item>/g) || []
+    const parsed = items.slice(0, 6).map((item, i) => parseRssItem(item, i))
+    return parsed.length >= 4 ? parsed : FALLBACK_NEWS
+  } catch {
+    return FALLBACK_NEWS
+  }
+}

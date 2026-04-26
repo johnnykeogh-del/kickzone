@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { FOOTBALL_NEWS, TOP_PLAYERS, getTodaysMatches } from '@/lib/football'
+import { TOP_PLAYERS, getTodaysMatches, getFootballNews } from '@/lib/football'
 import SafeImage from '@/components/SafeImage'
 
 export default async function HomePage() {
-  const matches = await getTodaysMatches()
-  const latestNews = FOOTBALL_NEWS.slice(0, 6)
+  const [matches, latestNews] = await Promise.all([getTodaysMatches(), getFootballNews()])
   const featuredPlayers = TOP_PLAYERS.slice(0, 4)
 
   return (
@@ -82,18 +81,23 @@ export default async function HomePage() {
       <section>
         <h2 className="section-title mb-5">🔥 Latest Football News</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {latestNews.map(news => (
-            <div key={news.id} className="card hover:border-white/20 transition-all group cursor-pointer">
-              <div className="flex items-center justify-between mb-3">
-                <span className="badge-green">{news.tag}</span>
-                {news.hot && <span className="badge-fire">🔥 Hot</span>}
+          {latestNews.map(news => {
+            const inner = (
+              <div className="card hover:border-white/20 transition-all group cursor-pointer h-full">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="badge-green">{news.tag}</span>
+                  {news.hot && <span className="badge-fire">🔥 Hot</span>}
+                </div>
+                <div className="text-4xl mb-3">{news.image}</div>
+                <h3 className="font-bold text-white leading-snug mb-2 group-hover:text-pitch-400 transition-colors">{news.title}</h3>
+                <p className="text-sm text-white/50 line-clamp-3 leading-relaxed">{news.summary}</p>
+                <p className="text-xs text-white/20 mt-3">{news.time} · BBC Sport</p>
               </div>
-              <div className="text-4xl mb-3">{news.image}</div>
-              <h3 className="font-bold text-white leading-snug mb-2 group-hover:text-pitch-400 transition-colors">{news.title}</h3>
-              <p className="text-sm text-white/50 line-clamp-3 leading-relaxed">{news.summary}</p>
-              <p className="text-xs text-white/20 mt-3">{news.time}</p>
-            </div>
-          ))}
+            )
+            return news.link
+              ? <a key={news.id} href={news.link} target="_blank" rel="noopener noreferrer">{inner}</a>
+              : <div key={news.id}>{inner}</div>
+          })}
         </div>
       </section>
 
