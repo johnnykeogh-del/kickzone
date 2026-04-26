@@ -83,7 +83,7 @@ export default function PlayersPage() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-pitch-900/50 border border-pitch-700/30 overflow-hidden shrink-0 flex items-center justify-center">
                   <img
-                    src={player.photo}
+                    src={`/api/player-image/${encodeURIComponent(player.name)}`}
                     alt={player.name}
                     className="w-full h-full object-cover object-top"
                     onError={e => {
