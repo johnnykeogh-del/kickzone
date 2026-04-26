@@ -174,6 +174,36 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Streamers */}
+      <section>
+        <div className="flex items-center gap-3 mb-2">
+          <h2 className="section-title">📺 Football YouTubers & Streamers</h2>
+        </div>
+        <p className="text-white/40 text-sm mb-5">The biggest football creators kids are watching right now — skills, FIFA packs, pro interviews and challenges!</p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {[
+            { name: 'F2Freestylers', emoji: '🎯', desc: 'Insane skill moves & freestyle tricks', subs: '14M+ subs', url: 'https://www.youtube.com/@F2Freestylers', platform: 'YouTube' },
+            { name: 'SkillTwins',    emoji: '👯', desc: 'Twin brothers teaching you pro skills', subs: '14M+ subs', url: 'https://www.youtube.com/@SkillTwins', platform: 'YouTube' },
+            { name: 'Theo Baker',    emoji: '🎙', desc: 'Ambushes pro players with funny interviews', subs: '4M+ subs', url: 'https://www.youtube.com/@TheoBaker', platform: 'YouTube' },
+            { name: 'ChrisMD',       emoji: '🃏', desc: 'FC card packs, challenges & football fun', subs: '7M+ subs', url: 'https://www.youtube.com/@ChrisMD', platform: 'YouTube' },
+            { name: 'Spencer FC',    emoji: '⚽', desc: 'Hashtag United & football challenges', subs: '1.5M+ subs', url: 'https://www.youtube.com/@SpencerFC', platform: 'YouTube' },
+            { name: 'W2S',           emoji: '🔥', desc: 'FIFA & football with a massive fanbase', subs: '16M+ subs', url: 'https://www.youtube.com/@W2S', platform: 'YouTube' },
+            { name: 'Calfreezy',     emoji: '❄️', desc: 'Football videos & hilarious challenges', subs: '2M+ subs', url: 'https://www.youtube.com/@Calfreezy', platform: 'YouTube' },
+            { name: 'GOAL',          emoji: '🏆', desc: 'Official highlights, news & top goals', subs: '15M+ subs', url: 'https://www.youtube.com/@goal', platform: 'YouTube' },
+          ].map(s => (
+            <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer"
+               className="card hover:border-red-500/40 transition-all group cursor-pointer text-center space-y-2 hover:scale-[1.02]">
+              <div className="text-3xl">{s.emoji}</div>
+              <h3 className="font-extrabold text-white text-sm group-hover:text-red-400 transition-colors leading-tight">{s.name}</h3>
+              <p className="text-white/40 text-xs leading-relaxed">{s.desc}</p>
+              <div className="flex items-center justify-center gap-1.5 pt-1">
+                <span className="text-[10px] bg-red-600/20 text-red-400 font-bold px-2 py-0.5 rounded-full">▶ {s.subs}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
     </div>
   )
 }
