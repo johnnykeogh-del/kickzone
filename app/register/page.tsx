@@ -80,7 +80,7 @@ export default function RegisterPage() {
             </div>
             <div>
               <label className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1.5 block">Favourite Team</label>
-              <select value={form.favoriteTeam} onChange={e => setForm(f => ({ ...f, favoriteTeam: e.target.value }))} className="input text-sm">
+              <select value={form.favoriteTeam} onChange={e => setForm(f => ({ ...f, favoriteTeam: e.target.value }))} className="input text-sm" style={{ colorScheme: 'dark' }}>
                 <option value="">Pick a team</option>
                 {TEAMS.map(t => <option key={t} value={t}>{t}</option>)}
               </select>
