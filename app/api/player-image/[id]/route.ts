@@ -1,22 +1,29 @@
 export const dynamic = 'force-dynamic'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const res = await fetch(`https://api.sofascore.com/api/v1/player/${params.id}/image`, {
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      'Referer': 'https://www.sofascore.com',
-    },
-  })
+  const name = decodeURIComponent(params.id)
 
-  if (!res.ok) return new Response(`Sofascore blocked: ${res.status}`, { status: 200 })
+  const wikiRes = await fetch(
+    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name)}`,
+    { headers: { 'User-Agent': 'mykickzone/1.0' } }
+  )
 
-  const buffer = await res.arrayBuffer()
-  const contentType = res.headers.get('content-type') || 'image/jpeg'
+  if (wikiRes.ok) {
+    const data = await wikiRes.json()
+    const imageUrl = data.thumbnail?.source
+    if (imageUrl) {
+      const imgRes = await fetch(imageUrl)
+      if (imgRes.ok) {
+        const buffer = await imgRes.arrayBuffer()
+        return new Response(buffer, {
+          headers: {
+            'Content-Type': imgRes.headers.get('content-type') || 'image/jpeg',
+            'Cache-Control': 'public, max-age=86400',
+          },
+        })
+      }
+    }
+  }
 
-  return new Response(buffer, {
-    headers: {
-      'Content-Type': contentType,
-      'Cache-Control': 'public, max-age=86400',
-    },
-  })
+  return new Response('Not found', { status: 404 })
 }
