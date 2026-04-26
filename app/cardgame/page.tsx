@@ -82,11 +82,24 @@ function MiniCard({ card, highlight, statKey }: { card: Card; highlight?: boolea
 // ============================================================
 // VS COMPUTER GAME
 // ============================================================
-function cpuPickStat(card: Card): string {
-  return STATS.reduce((best, s) => card[s] > card[best as typeof s] ? s : best, 'pac' as string)
+type Difficulty = 'easy' | 'medium' | 'hard'
+
+function cpuPickStat(card: Card, difficulty: Difficulty): string {
+  const best = STATS.reduce((b, s) => card[s] > card[b as typeof s] ? s : b, 'pac' as string)
+  if (difficulty === 'hard') return best
+  if (difficulty === 'easy') return STATS[Math.floor(Math.random() * STATS.length)]
+  // medium: 50/50
+  return Math.random() < 0.5 ? best : STATS[Math.floor(Math.random() * STATS.length)]
+}
+
+const DIFFICULTY_CONFIG = {
+  easy:   { label: '🟢 Easy',   desc: 'CPU picks randomly',       color: 'border-green-500 bg-green-500/10' },
+  medium: { label: '🟡 Medium', desc: 'CPU sometimes picks best', color: 'border-yellow-500 bg-yellow-500/10' },
+  hard:   { label: '🔴 Hard',   desc: 'CPU always picks best',    color: 'border-red-500 bg-red-500/10' },
 }
 
 function VsComputer({ onBack }: { onBack: () => void }) {
+  const [difficulty, setDifficulty] = useState<Difficulty | null>(null)
   const [myDeck, setMyDeck] = useState<Card[]>([])
   const [cpuDeck, setCpuDeck] = useState<Card[]>([])
   const [roundResult, setRoundResult] = useState<RoundResult | null>(null)
@@ -97,15 +110,40 @@ function VsComputer({ onBack }: { onBack: () => void }) {
   const [iWon, setIWon] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  useEffect(() => {
+  const startGame = (diff: Difficulty) => {
+    setDifficulty(diff)
     const shuffled = shuffle([...CARDS])
     const mid = Math.floor(shuffled.length / 2)
     setMyDeck(shuffled.slice(0, mid))
     setCpuDeck(shuffled.slice(mid))
     setMyTurn(true)
+  }
+
+  useEffect(() => {
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
   }, [])
 
-  const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean) => {
+  // Difficulty picker
+  if (!difficulty) {
+    return (
+      <div className="space-y-4">
+        <h2 className="text-xl font-extrabold text-white text-center">Choose Difficulty</h2>
+        <div className="space-y-3">
+          {(Object.entries(DIFFICULTY_CONFIG) as [Difficulty, typeof DIFFICULTY_CONFIG.easy][]).map(([key, cfg]) => (
+            <button key={key} onClick={() => startGame(key)}
+              className={`w-full card border ${cfg.color} text-left p-4 hover:scale-[1.02] transition-all`}>
+              <div className="font-extrabold text-white text-lg">{cfg.label}</div>
+              <div className="text-white/50 text-sm">{cfg.desc}</div>
+            </button>
+          ))}
+        </div>
+        <button onClick={onBack} className="text-white/30 text-sm hover:text-white/60 transition-colors w-full text-center">← Back</button>
+      </div>
+    )
+  }
+
+
+  const resolveRound = useCallback((stat: string, mDeck: Card[], cDeck: Card[], isMyPick: boolean, diff: Difficulty = difficulty ?? 'medium') => {
     const myCard = mDeck[0]
     const cpuCard = cDeck[0]
     const myVal = myCard[stat as keyof Card] as number
@@ -147,7 +185,7 @@ function VsComputer({ onBack }: { onBack: () => void }) {
         setCpuThinking(true)
         timerRef.current = setTimeout(() => {
           setCpuThinking(false)
-          resolveRound(cpuPickStat(newCpuDeck[0]), newMyDeck, newCpuDeck, false)
+          resolveRound(cpuPickStat(newCpuDeck[0], diff), newMyDeck, newCpuDeck, false, diff)
         }, 1200)
       }
     }, 2200)
@@ -213,8 +251,9 @@ function VsComputer({ onBack }: { onBack: () => void }) {
           <div className="text-6xl">{iWon ? '🏆' : '😢'}</div>
           <h2 className="text-3xl font-extrabold text-white">{iWon ? 'You Won!' : 'CPU Won!'}</h2>
           <p className="text-white/50">{iWon ? 'You beat the computer! 🎉' : 'The computer got all the cards! 💪'}</p>
-          <div className="flex gap-3 justify-center">
+          <div className="flex gap-3 justify-center flex-wrap">
             <button onClick={() => { setFinished(false); setShowResult(false); const s = shuffle([...CARDS]); const m = Math.floor(s.length/2); setMyDeck(s.slice(0,m)); setCpuDeck(s.slice(m)); setMyTurn(true) }} className="btn-primary px-6 py-3">Play Again ⚽</button>
+            <button onClick={() => { setFinished(false); setShowResult(false); setDifficulty(null) }} className="btn px-6 py-3 text-white/70 hover:text-white border border-white/20">Change Difficulty</button>
             <button onClick={onBack} className="btn px-6 py-3 text-white/50 hover:text-white">Back to Lobby</button>
           </div>
         </div>
