@@ -1,7 +1,15 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "WebSearch",
+      "WebFetch(domain:api.sofascore.com)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "WebFetch(domain:mykickzone.vercel.app)",
+      "Bash(vercel ls *)",
+      "Bash(curl -s \"https://www.google.com/search?q=free+online+football+soccer+card+battle+games+kids+browser+Top+Trumps+Match+Attax\" -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36\")"
     ]
   }
 }

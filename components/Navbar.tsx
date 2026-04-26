@@ -20,6 +20,7 @@ const NAV_GROUPS = [
     links: [
       { href: '/games',      label: '🎮 Mini Games',    desc: 'Badge quiz, silhouette & more' },
       { href: '/fc26',       label: '🃏 FC26 Cards',    desc: 'Player cards & stats' },
+      { href: '/cardgame',   label: '⚡ Card Battle',   desc: 'Top Trumps vs other kids!' },
       { href: '/predictor',  label: '🔮 Predictor',     desc: 'Predict scores, earn XP' },
       { href: '/battle',     label: '⚔️ Battle',        desc: 'Player vs Player stats' },
       { href: '/quiz',       label: '🧠 Quiz Zone',     desc: '10 football questions' },

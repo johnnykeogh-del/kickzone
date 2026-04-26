@@ -24,6 +24,26 @@ model User {
   discussions    Discussion[]
   comments       Comment[]
   votes          CommentVote[]
+  gamesAsP1      Game[]    @relation("P1Games")
+  gamesAsP2      Game[]    @relation("P2Games")
+  gamesWon       Game[]    @relation("WonGames")
+}
+
+model Game {
+  id           String   @id @default(cuid())
+  player1Id    String
+  player2Id    String?
+  status       String   @default("WAITING")
+  currentTurn  String?
+  player1Deck  String   @default("[]")
+  player2Deck  String   @default("[]")
+  roundStat    String?
+  winnerId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  player1      User     @relation("P1Games", fields: [player1Id], references: [id])
+  player2      User?    @relation("P2Games", fields: [player2Id], references: [id])
+  winner       User?    @relation("WonGames", fields: [winnerId], references: [id])
 }
 
 model Interview {

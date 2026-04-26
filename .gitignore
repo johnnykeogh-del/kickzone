@@ -44,3 +44,5 @@ next-env.d.ts
 # real env (only .env*.local is already ignored)
 .env
 .env.vercel.txt
+
+.vercel
