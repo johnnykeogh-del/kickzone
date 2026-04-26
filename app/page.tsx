@@ -14,17 +14,23 @@ export default async function HomePage() {
         <div className="absolute inset-0 opacity-10"
           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
         <div className="relative z-10 max-w-2xl">
-          <div className="flex items-center gap-2 mb-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-2">
+            Football Life<br/>
+            <span className="text-pitch-400">for Kids</span>
+          </h1>
+          <p className="text-white/50 text-base mb-5">Football news, games &amp; legends — all in one place ⚽</p>
+          <div className="flex flex-wrap gap-2 mb-8">
             <span className="badge-green">⚡ Live Season 2025/26</span>
             <span className="badge-volt">🏆 Global Coverage</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">📰 Live BBC News</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">⚽ 2,500+ Players</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">🃏 Card Battle Game</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🏆 GOAT Legends</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">📺 Top YouTubers</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">💪 Skills Channels</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-pink-500/20 text-pink-400 border border-pink-500/30">🌟 Wonderkids</span>
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">💬 Match Chat</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">
-            Football News<br/>
-            <span className="text-pitch-400">Made for Kids</span>
-          </h1>
-          <p className="text-white/60 text-lg mb-8">
-            League tables, player market values, real pro interviews and live match chat — all in one place. Your football world! ⚽
-          </p>
           <div className="flex flex-wrap gap-3">
             <Link href="/leagues" className="btn-primary px-6 py-3 text-base">🏆 League Tables</Link>
             <Link href="/interviews" className="btn-volt px-6 py-3 text-base">🎙 Kid Interviews</Link>
