@@ -6,7 +6,20 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 const AVATARS = ['⚽', '🏆', '⭐', '🔥', '🦁', '🐯', '🦊', '🐺', '🦅', '🦋', '🚀', '⚡', '💥', '🎯', '🏅']
-const TEAMS = ['Arsenal', 'Barcelona', 'Bayern Munich', 'Chelsea', 'Juventus', 'Liverpool', 'Manchester City', 'Manchester United', 'PSG', 'Real Madrid']
+const TEAM_GROUPS = [
+  { label: '🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League', teams: ['Arsenal', 'Aston Villa', 'Brentford', 'Brighton', 'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle United', 'Nottingham Forest', 'Tottenham Hotspur', 'West Ham United', 'Wolverhampton Wanderers'] },
+  { label: '🇪🇸 La Liga', teams: ['Athletic Bilbao', 'Atlético Madrid', 'Barcelona', 'Celta Vigo', 'Getafe', 'Girona', 'Osasuna', 'Rayo Vallecano', 'Real Betis', 'Real Madrid', 'Real Sociedad', 'Sevilla', 'Valencia', 'Villarreal'] },
+  { label: '🇩🇪 Bundesliga', teams: ['Bayer Leverkusen', 'Bayern Munich', 'Borussia Dortmund', 'Borussia Mönchengladbach', 'Eintracht Frankfurt', 'Freiburg', 'Hoffenheim', 'Mainz', 'RB Leipzig', 'Stuttgart', 'Union Berlin', 'Werder Bremen'] },
+  { label: '🇮🇹 Serie A', teams: ['AC Milan', 'Atalanta', 'Bologna', 'Fiorentina', 'Inter Milan', 'Juventus', 'Lazio', 'Napoli', 'Roma', 'Torino', 'Udinese'] },
+  { label: '🇫🇷 Ligue 1', teams: ['Brest', 'Lens', 'Lille', 'Lyon', 'Marseille', 'Monaco', 'Montpellier', 'Nice', 'PSG', 'Rennes', 'Strasbourg'] },
+  { label: '🇵🇹 Primeira Liga', teams: ['Benfica', 'Braga', 'Porto', 'Sporting CP'] },
+  { label: '🇳🇱 Eredivisie', teams: ['Ajax', 'AZ Alkmaar', 'Feyenoord', 'PSV Eindhoven'] },
+  { label: '🏴󠁧󠁢󠁳󠁣󠁴󠁿 Scottish Prem', teams: ['Celtic', 'Hearts', 'Hibernian', 'Rangers'] },
+  { label: '🇹🇷 Süper Lig', teams: ['Beşiktaş', 'Fenerbahçe', 'Galatasaray', 'Trabzonspor'] },
+  { label: '🇦🇷 Argentina', teams: ['Boca Juniors', 'Independiente', 'Racing Club', 'River Plate', 'San Lorenzo'] },
+  { label: '🇧🇷 Brazil', teams: ['Corinthians', 'Cruzeiro', 'Flamengo', 'Fluminense', 'Palmeiras', 'Santos', 'São Paulo'] },
+  { label: '🌎 MLS', teams: ['Atlanta United', 'Charlotte FC', 'Inter Miami', 'LA Galaxy', 'LAFC', 'New York City FC', 'New York Red Bulls', 'Seattle Sounders'] },
+]
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -82,7 +95,11 @@ export default function RegisterPage() {
               <label className="text-xs font-bold text-white/40 uppercase tracking-wider mb-1.5 block">Favourite Team</label>
               <select value={form.favoriteTeam} onChange={e => setForm(f => ({ ...f, favoriteTeam: e.target.value }))} className="input text-sm" style={{ colorScheme: 'dark' }}>
                 <option value="">Pick a team</option>
-                {TEAMS.map(t => <option key={t} value={t}>{t}</option>)}
+                {TEAM_GROUPS.map(g => (
+                  <optgroup key={g.label} label={g.label}>
+                    {g.teams.map(t => <option key={t} value={t}>{t}</option>)}
+                  </optgroup>
+                ))}
               </select>
             </div>
           </div>
