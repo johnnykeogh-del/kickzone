@@ -38,7 +38,7 @@ export default function GoldenBootPage() {
             <div key={s.rank} className={`card border-2 ${podium.bg} text-center flex flex-col items-center gap-2 py-4`}>
               <div className="text-2xl">{podium.medal}</div>
               <div className={`${podium.size} rounded-full overflow-hidden border-2 border-white/20 mx-auto`}>
-                <img src={s.photo} alt={s.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
+                <img src={`/api/player-image/${encodeURIComponent(s.name)}`} alt={s.name} className="w-full h-full object-cover object-top" loading="lazy" onError={e => (e.currentTarget.style.display='none')} />
               </div>
               <div>
                 <p className="font-extrabold text-white text-sm leading-tight">{s.name}</p>
@@ -67,7 +67,7 @@ export default function GoldenBootPage() {
             </div>
             <div className="col-span-5 flex items-center gap-2 min-w-0">
               <div className="w-9 h-9 rounded-full overflow-hidden border border-white/10 shrink-0">
-                <img src={s.photo} alt={s.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
+                <img src={`/api/player-image/${encodeURIComponent(s.name)}`} alt={s.name} className="w-full h-full object-cover object-top" loading="lazy" onError={e => (e.currentTarget.style.display='none')} />
               </div>
               <div className="min-w-0">
                 <p className="font-bold text-white text-sm truncate">{s.name}</p>

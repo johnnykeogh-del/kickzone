@@ -91,7 +91,7 @@ export default function WonderkidsPage() {
             className="card hover:border-pitch-500/40 transition-all cursor-pointer group">
             <div className="flex items-start gap-3 mb-3">
               <div className="w-14 h-14 rounded-xl overflow-hidden border border-white/10 shrink-0">
-                <img src={kid.photo} alt={kid.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
+                <img src={`/api/player-image/${encodeURIComponent(kid.name)}`} alt={kid.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-extrabold text-white group-hover:text-pitch-400 transition-colors truncate">{kid.name}</p>
@@ -122,7 +122,7 @@ export default function WonderkidsPage() {
             <button onClick={() => setSelected(null)} className="float-right text-white/30 hover:text-white text-2xl">×</button>
             <div className="flex items-center gap-4 mb-4">
               <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-pitch-500/40">
-                <img src={selected.photo} alt={selected.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
+                <img src={`/api/player-image/${encodeURIComponent(selected.name)}`} alt={selected.name} className="w-full h-full object-cover object-top" onError={e => (e.currentTarget.style.display='none')} />
               </div>
               <div>
                 <h2 className="text-2xl font-extrabold text-white">{selected.name}</h2>
