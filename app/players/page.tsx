@@ -90,6 +90,7 @@ export default function PlayersPage() {
   const [query, setQuery]       = useState('')
   const [league, setLeague]     = useState('')
   const [position, setPosition] = useState('')
+  const [sort, setSort]         = useState('az')
   const [page, setPage]         = useState(1)
 
   const fetchPlayers = useCallback(async () => {
@@ -98,6 +99,7 @@ export default function PlayersPage() {
     if (query)    params.set('q', query)
     if (league)   params.set('league', league)
     if (position) params.set('position', position)
+    if (sort)     params.set('sort', sort)
     params.set('page', String(page))
     params.set('limit', '24')
     try {
@@ -107,7 +109,7 @@ export default function PlayersPage() {
     } finally {
       setLoading(false)
     }
-  }, [query, league, position, page])
+  }, [query, league, position, sort, page])
 
   useEffect(() => { fetchPlayers() }, [fetchPlayers])
 
@@ -116,6 +118,8 @@ export default function PlayersPage() {
     if (newPosition !== undefined) setPosition(newPosition)
     setPage(1)
   }
+
+  const changeSort = (newSort: string) => { setSort(newSort); setPage(1) }
 
   const submitSearch = () => { setQuery(search); setPage(1) }
   const hasFilter    = query || league || position
@@ -180,7 +184,7 @@ export default function PlayersPage() {
           )}
         </div>
 
-        {/* League dropdown + position tabs */}
+        {/* League dropdown + sort + position tabs */}
         <div className="flex flex-wrap items-center gap-3">
           <select
             value={league}
@@ -192,6 +196,18 @@ export default function PlayersPage() {
                 {opt.flag} {opt.label}
               </option>
             ))}
+          </select>
+
+          <select
+            value={sort}
+            onChange={e => changeSort(e.target.value)}
+            className="bg-white/5 border border-white/10 text-white rounded-xl px-3 py-2 text-sm font-bold focus:outline-none focus:border-pitch-500/60 cursor-pointer"
+          >
+            <option value="az"       className="bg-dark-900 text-white">A → Z</option>
+            <option value="za"       className="bg-dark-900 text-white">Z → A</option>
+            <option value="youngest" className="bg-dark-900 text-white">Youngest first</option>
+            <option value="oldest"   className="bg-dark-900 text-white">Oldest first</option>
+            <option value="number"   className="bg-dark-900 text-white">Shirt number</option>
           </select>
 
           <div className="flex gap-2 flex-wrap">
