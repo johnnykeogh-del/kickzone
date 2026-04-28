@@ -468,10 +468,9 @@ export default function PenaltyPage() {
             >
               <div className="grid grid-cols-3 gap-2">
                 {ZONES.map(z => {
-                  const isBall   = isRevealing && reveal && reveal.step >= 1 && reveal.kick.zone === z.id
-                  const isKeeper = isRevealing && reveal && reveal.step >= 2 && reveal.kick.keeper === z.id
-                  const isGoal   = isBall && reveal?.kick.goal && reveal.step >= 2
-                  const isSaved  = isBall && !reveal?.kick.goal && reveal && reveal.step >= 2
+                  const isBall = isRevealing && reveal && reveal.step >= 1 && reveal.kick.zone === z.id
+                  const isGoal = isBall && reveal?.kick.goal && reveal.step >= 2
+                  const isSaved = isBall && !reveal?.kick.goal && reveal && reveal.step >= 2
 
                   return (
                     <button
@@ -483,20 +482,17 @@ export default function PenaltyPage() {
                         gridActive && !isRevealing
                           ? 'bg-white/5 hover:bg-pitch-500/20 hover:border-pitch-500/60 border border-white/10 hover:scale-105 cursor-pointer active:scale-95'
                           : 'cursor-default border border-white/5',
-                        isBall && !isKeeper && reveal?.step === 1 ? 'bg-volt-400/15 border border-volt-400/40' : '',
+                        isBall && reveal?.step === 1 ? 'bg-volt-400/15 border border-volt-400/40' : '',
                         isGoal  ? 'bg-volt-400/20 border-2 border-volt-400 scale-105' : '',
                         isSaved ? 'bg-red-500/20 border-2 border-red-500' : '',
-                        isKeeper && !isBall ? 'ring-2 ring-blue-400/60 bg-blue-400/10' : '',
-                        isKeeper && isBall  ? 'ring-2 ring-blue-400/40' : '',
                       ].filter(Boolean).join(' ')}
                     >
                       {isRevealing ? (
                         <>
-                          {isKeeper && reveal && reveal.step >= 2 && <span className="text-xl">🧤</span>}
                           {isBall && reveal && reveal.step === 1 && <span className="text-xl">⚽</span>}
                           {isBall && isGoal  && <span className="text-xl">⚽</span>}
                           {isBall && isSaved && <span className="text-xl">❌</span>}
-                          {!isBall && !isKeeper && <span className="text-white/10 text-lg">{z.emoji}</span>}
+                          {!isBall && <span className="text-white/10 text-lg">{z.emoji}</span>}
                         </>
                       ) : (
                         <>
@@ -508,6 +504,59 @@ export default function PenaltyPage() {
                   )
                 })}
               </div>
+
+              {/* Animated goalkeeper — slides to keeper zone on reveal */}
+              {isRevealing && reveal && reveal.step >= 1 && (() => {
+                const kz = reveal.kick.keeper
+                const col = kz.endsWith('L') ? 0 : kz.endsWith('R') ? 2 : 1
+                const row = kz.startsWith('T') ? 0 : kz.startsWith('B') ? 2 : 1
+                const leftPct = [16, 50, 84][col]
+                const topPct  = [22, 52, 80][row]
+                const atTarget = reveal.step >= 2
+
+                // Dive rotation: lean toward the zone
+                const diveLeft  = col === 0
+                const diveRight = col === 2
+                const isTop     = row === 0
+                let rotate = 0
+                if (diveLeft)  rotate = isTop ? -55 : -40
+                if (diveRight) rotate = isTop ?  55 :  40
+                if (!diveLeft && !diveRight && isTop) rotate = 0
+
+                return (
+                  <div
+                    className="absolute pointer-events-none z-10 select-none"
+                    style={{
+                      left: atTarget ? `${leftPct}%` : '50%',
+                      top:  atTarget ? `${topPct}%`  : '52%',
+                      transform: `translate(-50%, -50%) rotate(${atTarget ? rotate : 0}deg)`,
+                      transition: 'left 0.55s cubic-bezier(.4,0,.2,1), top 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1)',
+                    }}
+                  >
+                    <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+                      {/* Gloves (hands stretched out) */}
+                      <ellipse cx="3"  cy="22" rx="4" ry="3" fill="#FBBF24" />
+                      <ellipse cx="41" cy="22" rx="4" ry="3" fill="#FBBF24" />
+                      {/* Arms */}
+                      <rect x="7"  y="20" width="10" height="4" rx="2" fill="#16A34A" />
+                      <rect x="27" y="20" width="10" height="4" rx="2" fill="#16A34A" />
+                      {/* Body / kit */}
+                      <rect x="15" y="14" width="14" height="18" rx="4" fill="#16A34A" />
+                      {/* Head */}
+                      <circle cx="22" cy="9" r="6" fill="#FCD34D" />
+                      {/* Eyes */}
+                      <circle cx="20" cy="9" r="1" fill="#1F2937" />
+                      <circle cx="24" cy="9" r="1" fill="#1F2937" />
+                      {/* Legs */}
+                      <rect x="15" y="30" width="6" height="10" rx="2" fill="#1D4ED8" />
+                      <rect x="23" y="30" width="6" height="10" rx="2" fill="#1D4ED8" />
+                      {/* Boots */}
+                      <rect x="13" y="38" width="10" height="4" rx="2" fill="#1F2937" />
+                      <rect x="21" y="38" width="10" height="4" rx="2" fill="#1F2937" />
+                    </svg>
+                  </div>
+                )
+              })()}
             </div>
             <div className="bg-white/5 h-5 flex items-center justify-center">
               <div className="w-20 h-0.5 bg-white/20 rounded" />
