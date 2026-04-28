@@ -40,6 +40,7 @@ export default function PredictorPage() {
   const [checking, setChecking]     = useState(false)
   const [storedXP, setStoredXP]     = useState(0)
   const [roundXP, setRoundXP]       = useState<number | null>(null)
+  const [leagueFilter, setLeagueFilter] = useState('all')
 
   // Load XP + any saved predictions from localStorage
   useEffect(() => {
@@ -76,7 +77,10 @@ export default function PredictorPage() {
     }))
   }
 
-  const allSet = matches.length > 0 && matches.every(m => predictions[m.id] !== undefined)
+  const leagues = ['all', ...Array.from(new Set(matches.map(m => m.league)))]
+  const visibleMatches = leagueFilter === 'all' ? matches : matches.filter(m => m.league === leagueFilter)
+
+  const allSet = visibleMatches.length > 0 && visibleMatches.every(m => predictions[m.id] !== undefined)
 
   const handleLock = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ preds: predictions, isLocked: true }))
@@ -120,8 +124,8 @@ export default function PredictorPage() {
     setRoundXP(null)
   }
 
-  const finishedCount  = matches.filter(m => m.status === 'FINISHED' && predictions[m.id]).length
-  const scheduledCount = matches.filter(m => m.status === 'SCHEDULED').length
+  const finishedCount  = visibleMatches.filter(m => m.status === 'FINISHED' && predictions[m.id]).length
+  const scheduledCount = visibleMatches.filter(m => m.status === 'SCHEDULED').length
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 space-y-8">
@@ -154,6 +158,29 @@ export default function PredictorPage() {
         </div>
       </div>
 
+      {/* League filter */}
+      {!loadingMatches && matches.length > 0 && (
+        <div className="flex flex-wrap gap-2 justify-center">
+          {leagues.map(l => {
+            const match = matches.find(m => m.league === l)
+            const flag  = l === 'all' ? '🌍' : (match?.leagueFlag ?? '')
+            return (
+              <button
+                key={l}
+                onClick={() => setLeagueFilter(l)}
+                className={`px-3 py-1.5 rounded-xl text-sm font-semibold border transition-all ${
+                  leagueFilter === l
+                    ? 'bg-pitch-500/20 border-pitch-500/40 text-pitch-400'
+                    : 'bg-white/5 border-white/10 text-white/60 hover:text-white hover:border-white/20'
+                }`}
+              >
+                {flag} {l === 'all' ? 'All Leagues' : l}
+              </button>
+            )
+          })}
+        </div>
+      )}
+
       {/* Loading */}
       {loadingMatches && (
         <div className="space-y-4">
@@ -164,7 +191,10 @@ export default function PredictorPage() {
       {/* Matches */}
       {!loadingMatches && (
         <div className="space-y-4">
-          {matches.map(match => {
+          {visibleMatches.length === 0 && (
+            <div className="card text-center py-10 text-white/40">No upcoming matches for this league right now.</div>
+          )}
+          {visibleMatches.map(match => {
             const pred    = predictions[match.id]
             const finished = match.status === 'FINISHED' && match.score?.home != null
             const scored  = finished && pred
@@ -260,7 +290,7 @@ export default function PredictorPage() {
                 🔮 Lock in Predictions!
               </button>
               {!allSet && (
-                <p className="text-white/30 text-sm">Enter a score for all {matches.length} matches to submit</p>
+                <p className="text-white/30 text-sm">Enter a score for all {visibleMatches.length} matches to submit</p>
               )}
             </>
           ) : (
