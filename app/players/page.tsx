@@ -146,7 +146,7 @@ export default function PlayersPage() {
                 onClick={() => { setSearch(p.name); setQuery(p.name); setPage(1) }}>
                 <div className="relative">
                   <img
-                    src={`/api/player-image/${encodeURIComponent(p.name)}`}
+                    src={`/api/player-image/${encodeURIComponent(p.name)}?pos=${encodeURIComponent(p.pos)}`}
                     alt={p.name}
                     className="w-14 h-14 rounded-full object-cover object-top border-2 border-white/10 group-hover:border-pitch-500/60 transition-all"
                     loading="lazy"
@@ -253,7 +253,7 @@ export default function PlayersPage() {
               {/* Player photo with crest overlay */}
               <div className="relative w-10 h-10 shrink-0">
                 <img
-                  src={`/api/player-image/${encodeURIComponent(player.name)}`}
+                  src={`/api/player-image/${encodeURIComponent(player.name)}?pos=${encodeURIComponent(player.position)}`}
                   alt={player.name}
                   className="w-10 h-10 rounded-full object-cover object-top"
                   loading="lazy"

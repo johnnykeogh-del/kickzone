@@ -32,14 +32,14 @@ const FALLBACK = [
 export async function GET() {
   if (!KEY) return NextResponse.json({ matches: FALLBACK, source: 'fallback' })
 
-  // Try the next 14 days to handle international breaks
-  const today    = new Date()
-  const twoWeeks = new Date(Date.now() + 14 * 86400000)
+  const now      = new Date()
+  const fourWeeks = new Date(Date.now() + 28 * 86400000)
 
   try {
     const res = await fetch(
-      `${BASE}/matches?status=SCHEDULED&dateFrom=${pad(today)}&dateTo=${pad(twoWeeks)}`,
-      { headers: { 'X-Auth-Token': KEY }, next: { revalidate: 1800 } }
+      `${BASE}/matches?status=SCHEDULED&dateFrom=${pad(now)}&dateTo=${pad(fourWeeks)}`,
+      // Always fetch fresh — never serve cached upcoming-match data
+      { headers: { 'X-Auth-Token': KEY }, cache: 'no-store' }
     )
     if (!res.ok) return NextResponse.json({ matches: FALLBACK, source: 'fallback' })
 
@@ -48,6 +48,8 @@ export async function GET() {
 
     const filtered = all
       .filter(m => TOP5.includes(m.competition?.code))
+      // Only keep matches that haven't kicked off yet
+      .filter(m => new Date(m.utcDate) > now)
       .slice(0, 10)
       .map(m => ({
         id:       m.id,
@@ -61,7 +63,7 @@ export async function GET() {
         score:       m.score?.fullTime ?? null,
       }))
 
-    return NextResponse.json({ matches: filtered.length >= 3 ? filtered : FALLBACK, source: 'live' })
+    return NextResponse.json({ matches: filtered.length >= 3 ? filtered : FALLBACK, source: filtered.length >= 3 ? 'live' : 'fallback' })
   } catch {
     return NextResponse.json({ matches: FALLBACK, source: 'fallback' })
   }
