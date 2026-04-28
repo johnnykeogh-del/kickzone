@@ -96,20 +96,38 @@ export default function LeaguesPage() {
           </div>
 
           {standings.map((row, i) => {
-            const isTop4 = row.position <= 4
-            const isTop6 = row.position <= 6
+            const isTop4    = row.position <= 4
+            const isEL5     = row.position === 5
+            const isEL6     = row.position === 6
+            const isUECL    = row.position === 7
             const isBottom3 = standings.length - row.position < 3
             const formLetters = row.form ? row.form.split(',').slice(-5) : []
+
+            const leftBorder = isTop4
+              ? 'border-l-2 border-l-pitch-500'
+              : isEL5 || isEL6
+              ? 'border-l-2 border-l-orange-500'
+              : isUECL
+              ? 'border-l-2 border-l-purple-500'
+              : isBottom3
+              ? 'border-l-2 border-l-red-500'
+              : 'border-l-2 border-l-transparent'
 
             return (
               <div
                 key={row.team.id}
                 className={`grid grid-cols-12 gap-2 px-4 py-3 items-center transition-colors hover:bg-white/5 ${
                   i < standings.length - 1 ? 'border-b border-white/5' : ''
-                } ${isTop4 ? 'border-l-2 border-l-pitch-500' : isBottom3 ? 'border-l-2 border-l-red-500' : 'border-l-2 border-l-transparent'}`}
+                } ${leftBorder}`}
               >
                 <div className="col-span-1 text-center">
-                  <span className={`text-sm font-extrabold ${isTop4 ? 'text-pitch-400' : isBottom3 ? 'text-red-400' : 'text-white/50'}`}>
+                  <span className={`text-sm font-extrabold ${
+                    isTop4    ? 'text-pitch-400'
+                    : isEL5 || isEL6 ? 'text-orange-400'
+                    : isUECL  ? 'text-purple-400'
+                    : isBottom3 ? 'text-red-400'
+                    : 'text-white/50'
+                  }`}>
                     {row.position}
                   </span>
                 </div>
@@ -145,9 +163,11 @@ export default function LeaguesPage() {
       ))}
 
       {/* Legend */}
-      {activeLeague !== 'CL' && activeLeague !== 'WC' && (
-        <div className="flex gap-6 mt-4 text-xs text-white/30">
+      {activeLeague !== 'CL' && activeLeague !== 'EL' && activeLeague !== 'WC' && (
+        <div className="flex gap-4 mt-4 text-xs text-white/30 flex-wrap">
           <span className="flex items-center gap-1.5"><span className="w-2 h-4 bg-pitch-500 rounded-sm" /> Champions League</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-4 bg-orange-500 rounded-sm" /> Europa League</span>
+          <span className="flex items-center gap-1.5"><span className="w-2 h-4 bg-purple-500 rounded-sm" /> Conference League</span>
           <span className="flex items-center gap-1.5"><span className="w-2 h-4 bg-red-500 rounded-sm" /> Relegation</span>
         </div>
       )}

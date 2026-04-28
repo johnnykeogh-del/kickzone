@@ -20,16 +20,16 @@ export default async function HomePage() {
           </h1>
           <p className="text-white/50 text-base mb-5">Football news, games &amp; legends — all in one place ⚽</p>
           <div className="flex flex-wrap gap-2 mb-8">
-            <span className="badge-green">⚡ Live Season 2025/26</span>
-            <span className="badge-volt">🏆 Global Coverage</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">📰 Live BBC News</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">⚽ 2,500+ Players</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30">🃏 Card Battle Game</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">🏆 GOAT Legends</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30">📺 Top YouTubers</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">💪 Skills Channels</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-pink-500/20 text-pink-400 border border-pink-500/30">🌟 Wonderkids</span>
-            <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30">💬 Match Chat</span>
+            <Link href="/leagues"     className="badge-green hover:opacity-80 transition-opacity cursor-pointer">⚡ Live Season 2025/26</Link>
+            <Link href="/leagues"     className="badge-volt hover:opacity-80 transition-opacity cursor-pointer">🏆 Global Coverage</Link>
+            <Link href="/#news"       className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30 hover:opacity-80 transition-opacity cursor-pointer">📰 Live BBC News</Link>
+            <Link href="/players"     className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30 hover:opacity-80 transition-opacity cursor-pointer">⚽ 2,500+ Players</Link>
+            <Link href="/cardgame"    className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:opacity-80 transition-opacity cursor-pointer">🃏 Card Battle Game</Link>
+            <Link href="/goat"        className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:opacity-80 transition-opacity cursor-pointer">🏆 GOAT Legends</Link>
+            <Link href="/#streamers"  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-red-500/20 text-red-400 border border-red-500/30 hover:opacity-80 transition-opacity cursor-pointer">📺 Top YouTubers</Link>
+            <Link href="/#skills"     className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30 hover:opacity-80 transition-opacity cursor-pointer">💪 Skills Channels</Link>
+            <Link href="/wonderkids"  className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-pink-500/20 text-pink-400 border border-pink-500/30 hover:opacity-80 transition-opacity cursor-pointer">🌟 Wonderkids</Link>
+            <Link href="/discussions" className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-500/20 text-teal-400 border border-teal-500/30 hover:opacity-80 transition-opacity cursor-pointer">💬 Match Chat</Link>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link href="/leagues" className="btn-primary px-6 py-3 text-base">🏆 League Tables</Link>
@@ -84,7 +84,7 @@ export default async function HomePage() {
       )}
 
       {/* News */}
-      <section>
+      <section id="news">
         <h2 className="section-title mb-5">🔥 Latest Football News</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {latestNews.map(news => {
@@ -181,7 +181,7 @@ export default async function HomePage() {
       </section>
 
       {/* Streamers */}
-      <section>
+      <section id="streamers">
         <div className="flex items-center gap-3 mb-2">
           <h2 className="section-title">📺 Football YouTubers & Streamers</h2>
         </div>
@@ -213,7 +213,7 @@ export default async function HomePage() {
       </section>
 
       {/* Training & Skills */}
-      <section>
+      <section id="skills">
         <div className="flex items-center gap-3 mb-2">
           <h2 className="section-title">⚽ Training & Skills Channels</h2>
         </div>
