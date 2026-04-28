@@ -161,6 +161,24 @@ export default async function HomePage() {
             <p className="text-white/40 text-xs leading-relaxed">10 questions, earn XP</p>
             <span className="badge-sky text-xs">DAILY</span>
           </Link>
+          <Link href="/penalty" className="card hover:border-volt-500/40 transition-all group cursor-pointer text-center space-y-3">
+            <div className="text-4xl">⚽</div>
+            <h3 className="font-extrabold text-white group-hover:text-volt-400 transition-colors">Penalty Shootout</h3>
+            <p className="text-white/40 text-xs leading-relaxed">5 kicks vs the keeper</p>
+            <span className="badge-volt text-xs">+XP</span>
+          </Link>
+          <Link href="/wordle" className="card hover:border-green-400/40 transition-all group cursor-pointer text-center space-y-3">
+            <div className="text-4xl">🟩</div>
+            <h3 className="font-extrabold text-white group-hover:text-green-400 transition-colors">Footie Wordle</h3>
+            <p className="text-white/40 text-xs leading-relaxed">Guess today's mystery player</p>
+            <span className="badge-green text-xs">DAILY</span>
+          </Link>
+          <Link href="/diary" className="card hover:border-pitch-500/40 transition-all group cursor-pointer text-center space-y-3">
+            <div className="text-4xl">📓</div>
+            <h3 className="font-extrabold text-white group-hover:text-pitch-400 transition-colors">My Diary</h3>
+            <p className="text-white/40 text-xs leading-relaxed">Track your own matches</p>
+            <span className="badge text-xs">PERSONAL</span>
+          </Link>
         </div>
       </section>
 
