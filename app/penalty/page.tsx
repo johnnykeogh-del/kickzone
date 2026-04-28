@@ -16,6 +16,15 @@ const ZONES: { id: Zone; label: string; emoji: string }[] = [
   { id: 'BR', label: 'Bot Right', emoji: '↘' },
 ]
 
+const LEGENDARY_KEEPERS = [
+  { name: 'Peter Schmeichel',  wiki: 'Peter Schmeichel' },
+  { name: 'Gianluigi Buffon',  wiki: 'Gianluigi Buffon' },
+  { name: 'Iker Casillas',     wiki: 'Iker Casillas' },
+  { name: 'Manuel Neuer',      wiki: 'Manuel Neuer' },
+  { name: 'David de Gea',      wiki: 'David de Gea' },
+  { name: 'Oliver Kahn',       wiki: 'Oliver Kahn' },
+]
+
 const KEEPER_WEIGHTS: Record<Zone, number> = {
   TL: 16, TC: 7,  TR: 16,
   ML: 20, MC: 3,  MR: 20,
@@ -130,6 +139,7 @@ function playSaveGroan() {
 export default function PenaltyPage() {
   const [mode,        setMode]        = useState<Mode | null>(null)
   const [phase,       setPhase]       = useState<Phase>('mode_select')
+  const [keeper,      setKeeper]      = useState(LEGENDARY_KEEPERS[0])
   const [rounds,      setRounds]      = useState<Round[]>([])
   const [kickNum,     setKickNum]     = useState(1)
   const [suddenDeath, setSuddenDeath] = useState(false)
@@ -306,7 +316,10 @@ export default function PenaltyPage() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <button
-            onClick={() => { setMode('1p'); setPhase('p1_kick') }}
+            onClick={() => {
+              const k = LEGENDARY_KEEPERS[Math.floor(Math.random() * LEGENDARY_KEEPERS.length)]
+              setKeeper(k); setMode('1p'); setPhase('p1_kick')
+            }}
             className="card hover:border-volt-400/40 transition-all text-center py-8 space-y-3 cursor-pointer group"
           >
             <div className="text-5xl">🤖</div>
@@ -314,7 +327,10 @@ export default function PenaltyPage() {
             <p className="text-white/40 text-xs">CPU kicks back — 5 kicks each</p>
           </button>
           <button
-            onClick={() => { setMode('2p'); setPhase('p1_kick') }}
+            onClick={() => {
+              const k = LEGENDARY_KEEPERS[Math.floor(Math.random() * LEGENDARY_KEEPERS.length)]
+              setKeeper(k); setMode('2p'); setPhase('p1_kick')
+            }}
             className="card hover:border-pitch-500/40 transition-all text-center py-8 space-y-3 cursor-pointer group"
           >
             <div className="text-5xl">👥</div>
@@ -533,33 +549,33 @@ export default function PenaltyPage() {
                       transition: 'left 0.55s cubic-bezier(.4,0,.2,1), top 0.55s cubic-bezier(.4,0,.2,1), transform 0.55s cubic-bezier(.4,0,.2,1)',
                     }}
                   >
-                    <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-                      {/* Gloves (hands stretched out) */}
-                      <ellipse cx="3"  cy="22" rx="4" ry="3" fill="#FBBF24" />
-                      <ellipse cx="41" cy="22" rx="4" ry="3" fill="#FBBF24" />
-                      {/* Arms */}
-                      <rect x="7"  y="20" width="10" height="4" rx="2" fill="#16A34A" />
-                      <rect x="27" y="20" width="10" height="4" rx="2" fill="#16A34A" />
-                      {/* Body / kit */}
-                      <rect x="15" y="14" width="14" height="18" rx="4" fill="#16A34A" />
-                      {/* Head */}
-                      <circle cx="22" cy="9" r="6" fill="#FCD34D" />
-                      {/* Eyes */}
-                      <circle cx="20" cy="9" r="1" fill="#1F2937" />
-                      <circle cx="24" cy="9" r="1" fill="#1F2937" />
-                      {/* Legs */}
-                      <rect x="15" y="30" width="6" height="10" rx="2" fill="#1D4ED8" />
-                      <rect x="23" y="30" width="6" height="10" rx="2" fill="#1D4ED8" />
-                      {/* Boots */}
-                      <rect x="13" y="38" width="10" height="4" rx="2" fill="#1F2937" />
-                      <rect x="21" y="38" width="10" height="4" rx="2" fill="#1F2937" />
-                    </svg>
+                    {/* Gloves flanking the photo */}
+                    <div className="flex items-center gap-1">
+                      <span className="text-2xl drop-shadow-lg" style={{ transform: 'scaleX(-1)' }}>🧤</span>
+                      <img
+                        src={`/api/player-image/${encodeURIComponent(keeper.wiki)}?pos=Goalkeeper`}
+                        alt={keeper.name}
+                        width={52}
+                        height={52}
+                        className="rounded-full object-cover border-2 border-yellow-400 bg-dark-800 shrink-0"
+                        style={{
+                          width: 52, height: 52,
+                          boxShadow: '0 0 12px rgba(0,0,0,0.8)',
+                        }}
+                      />
+                      <span className="text-2xl drop-shadow-lg">🧤</span>
+                    </div>
+                    <p className="text-[9px] text-white/60 font-bold text-center mt-0.5 whitespace-nowrap">
+                      {keeper.name.split(' ').pop()}
+                    </p>
                   </div>
                 )
               })()}
             </div>
-            <div className="bg-white/5 h-5 flex items-center justify-center">
-              <div className="w-20 h-0.5 bg-white/20 rounded" />
+            <div className="bg-white/5 h-6 flex items-center justify-center gap-2">
+              <div className="w-16 h-0.5 bg-white/20 rounded" />
+              <span className="text-white/30 text-[10px] font-semibold shrink-0">🧤 {keeper.name}</span>
+              <div className="w-16 h-0.5 bg-white/20 rounded" />
             </div>
           </div>
         </>
