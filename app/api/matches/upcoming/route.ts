@@ -37,6 +37,7 @@ async function fetchLeagueScheduled(code: string, name: string, flag: string, no
     const data = await res.json()
     return ((data.matches || []) as any[])
       .filter((m: any) => new Date(m.utcDate) > now)
+      .slice(0, 10) // up to 10 per league
       .map((m: any) => ({
         id:          m.id,
         homeTeam: {
@@ -71,11 +72,11 @@ export async function GET() {
     LEAGUES.map(l => fetchLeagueScheduled(l.code, l.name, l.flag, now))
   )
 
-  // Flatten, sort by date, take 10 soonest
+  // Flatten, sort by date, take up to 50 (10 per league × 5 leagues)
   const all = results
     .flat()
     .sort((a, b) => new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime())
-    .slice(0, 10)
+    .slice(0, 50)
 
   return NextResponse.json({
     matches: all.length >= 3 ? all : FALLBACK,
